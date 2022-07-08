@@ -8,8 +8,6 @@ source("ONS_URLs.R")
 
 # Web scrape relevant data ----
 
-
-
 localData <- list()
 localData <- csvDownload(localURLs, localData)
 
@@ -28,7 +26,9 @@ local_wellbeing <- local_wellbeing %>%
   select(Time, administrative.geography, Geography, 
          MeasureOfWellbeing, Estimate, Value, Lower.limit, Upper.limit) %>%
   mutate(data_age = (as.numeric(cYear) - as.numeric(substr(local_wellbeing$Time, 1, 4)))) %>%
-  filter(Estimate == "Average (mean)")
+  filter(Estimate == "Average (mean)",
+         MeasureOfWellbeing == "Life Satisfaction") %>%
+  filter(data_age == min(data_age))
 
 ## Life expect data ----
 
@@ -37,4 +37,5 @@ names(local_lifeexp)[1] <- "Value" #measurement of expected additional life year
 local_lifeexp <- local_lifeexp %>%
   select(Time, administrative.geography, Geography, 
          Sex, AgeGroups, Value, Lower.CI, Upper.CI) %>%
-  mutate(data_age = (as.numeric(cYear) - as.numeric(substr(local_lifeexp$Time, 1, 4))))
+  mutate(data_age = (as.numeric(cYear) - as.numeric(substr(local_lifeexp$Time, 1, 4)))) %>%
+  filter(data_age == min(data_age))
