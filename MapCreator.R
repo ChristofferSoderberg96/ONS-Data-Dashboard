@@ -36,7 +36,7 @@ setdiff(local_earnings$administrative.geography, LAmap$LAD21CD)
 
 LAmap <-
   merge(LAmap, 
-        select(local_earnings, administrative.geography, AvgPay), 
+        select(local_earnings, administrative.geography, MedianPay), 
         by.x="LAD21CD", 
         by.y="administrative.geography")
 
@@ -57,18 +57,13 @@ LAmap <-
 # Palette of greens to represent earnings
 
 earnings_colors <- colorRampPalette(brewer.pal(9, "Greens"))(50)
-
-# censor extreme values for the purpose of plotting
-temp <- as.numeric(cut(LAmap$AvgPay, 100))
-for (i in 1:length(temp)) { if (!is.na(temp[i]) & temp[i] > 50) {temp[i] = 50}}
-
-earnings_colors <- earnings_colors[temp]
+earnings_colors <- earnings_colors[as.numeric(cut(LAmap$MedianPay, 50))]
 
 #set NAs to gray
 for(i in 1:length(earnings_colors)) { if (is.na(earnings_colors[i])) {earnings_colors[i] = "#555555"}}
 
 ## Average earnings ----
-plot(LAmap, col = earnings_colors, bg = "#A6CAE0")
+#plot(LAmap, col = earnings_colors, bg = "#A6CAE0")
 
 # Palette of purples to represent life satisfaction
 
@@ -79,7 +74,7 @@ lifesat_colors <- lifesat_colors[as.numeric(cut(LAmap$LifeSat, 50))]
 for(i in 1:length(lifesat_colors)) { if (is.na(lifesat_colors[i])) {lifesat_colors[i] = "#555555"}}
 
 ## Average life satisfaction ----
-plot(LAmap, col = lifesat_colors, bg = "#A6CAE0")
+#plot(LAmap, col = lifesat_colors, bg = "#A6CAE0")
 
 
 # Dynamic plots ----
@@ -90,35 +85,28 @@ LAlatlon <- spTransform(LAmap, CRS("+proj=longlat +datum=WGS84"))
 # Interactive labels
 datalabel <- paste (
   "Local Authority: ", LAlatlon$LAD21NM, "<br/>",
-  "Mean Annual Income: £", format(LAlatlon$AvgPay, big.mark = ",", scientific = FALSE), "<br/>",
+  "Median Annual Income (£):", format(LAlatlon$MedianPay, big.mark = ",", scientific = FALSE), "<br/>",
   "Mean Life Satisfaction (0-10): ", LAlatlon$LifeSat
 ) %>%
   lapply(htmltools::HTML)
 
-# Custom bins
-income_bins <- c(22000,
-                 24000,
-                 28000,
-                 30000,
-                 32000,
-                 34000,
-                 36000,
-                 38000,
-                 40000,
-                 80000)
-
-# Palette
+# Palettes
 earnings_pal <- colorBin("Greens",
-                       LAlatlon$AvgPay,
-                       bins = income_bins,
-                       na.color = "#555555")
+                         LAlatlon$MedianPay,
+                         bins = 6,
+                         na.color = "#555555")
 
-# Leaflet widget
+lifesat_pal <- colorBin("Purples",
+                        LAlatlon$LifeSat,
+                        bins = 6,
+                        na.color = "#555555")
+
+# Leaflet widget for earnings ----
 LAmapEarnings <- leaflet(LAlatlon) %>%
-  setView(lat = 55, lng = -3, zoom = 7) %>%
+  setView(lat = 52.5, lng = -1, zoom = 7) %>%
   setMaxBounds(lat1 = 48, lng1 = -8,
-               lat2 = 60, lng2 = 2) %>%
-  addPolygons(fillColor = earnings_pal(LAlatlon$AvgPay),
+               lat2 = 60, lng2 = 4) %>%
+  addPolygons(fillColor = earnings_pal(LAlatlon$MedianPay),
               fillOpacity = 1,
               stroke = TRUE,
               weight = 1.5, 
@@ -130,10 +118,38 @@ LAmapEarnings <- leaflet(LAlatlon) %>%
                 direction = "auto")
               ) %>%
   addLegend(pal = earnings_pal,
-            values = ~LAlatlon$AvgPay,
-            title = "Mean Annual Income (£)",
+            values = ~LAlatlon$MedianPay,
+            title = "Median Annual Income (£)",
             position = "bottomleft",
+            na.label = "No data",
             opacity = 0.8)
 
-# Show preview of widget
+# Leaflet widget for life satisfaction ----
+LAmapLifesat <- leaflet(LAlatlon) %>%
+  setView(lat = 52.5, lng = -1, zoom = 7) %>%
+  setMaxBounds(lat1 = 48, lng1 = -8,
+               lat2 = 60, lng2 = 4) %>%
+  addPolygons(fillColor = lifesat_pal(LAlatlon$LifeSat),
+              fillOpacity = 1,
+              stroke = TRUE,
+              weight = 1.5, 
+              color = "Black",
+              label = datalabel,
+              labelOptions = labelOptions( 
+                style = list("font-weight" = "normal", padding = "3px 8px"), 
+                textsize = "13px", 
+                direction = "auto")
+  ) %>%
+  addLegend(pal = lifesat_pal,
+            values = ~LAlatlon$LifeSat
+            ,
+            title = "Mean Life Satisfaction (0-10):",
+            position = "bottomleft",
+            na.label = "No data",
+            opacity = 0.8)
+
+# Previews ----
+
 LAmapEarnings
+
+LAmapLifesat

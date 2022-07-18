@@ -19,13 +19,13 @@ local_earnings <- labourData[[1]]
 
 ## Earnings data ----
 
-names(local_earnings)[1] <- "AvgPay" # Amount in £
+names(local_earnings)[1] <- "MedianPay" # Amount in £
 
 local_earnings <- local_earnings %>%
   filter(WorkplaceOrResidence == "Residence",
          WorkingPattern == "All",
          HoursAndEarnings == "Annual pay - Gross",
-         AveragesAndPercentiles == "Mean",
+         AveragesAndPercentiles == "Median",
          Sex == "All") %>%
   select(Time, administrative.geography, Geography,
-         AveragesAndPercentiles, Sex, AvgPay)
+         AveragesAndPercentiles, Sex, MedianPay)
