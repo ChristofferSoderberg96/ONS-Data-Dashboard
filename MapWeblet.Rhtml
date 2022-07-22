@@ -1,10 +1,15 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
      "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html lang="en">
 <head>
+
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
 <title>Learning and Work Institute Local Data Dashboard</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+
 <style type="text/css">
 <!--  Add in Google fonts. -->
     <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Maven+Pro:500,700" media="all"/>
@@ -26,10 +31,18 @@ a:hover {
 a:active {
 	text-decoration: none;
 }
-
-
 -->
-</style></head>
+
+.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+
+</style>
+
+</head>
 
 <body>
 
@@ -43,6 +56,18 @@ a:active {
 source("MapCreator.R")
 
     end.rcode-->
+
+<div id="map" style="width: 600px; height: 400px;"></div>
+<script>
+
+  var map = L.map('map').setView([51.505, -0.09], 13);
+  
+  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+</script>
 
 </body>
 

@@ -22,7 +22,7 @@ if(!file.exists("LAShapeFiles")) {
   print("Please download the latest local authority shapefiles from https://geoportal.statistics.gov.uk/")
 }
 
-LAmap <- readOGR("LAShapeFiles/LAD_DEC_2021_GB_BFC.shp") # verified with plot()
+LAmap <- readOGR("LAShapeFiles/LAD_DEC_2021_GB_BFC.shp") # verify with plot()
 
 # Merge local data with spatial data ----
 
