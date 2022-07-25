@@ -34,8 +34,8 @@ a:active {
 -->
 
 .leaflet-container {
-			height: 400px;
-			width: 600px;
+			height: 600px;
+			width: 800px;
 			max-width: 100%;
 			max-height: 100%;
 		}
@@ -57,17 +57,9 @@ source("MapCreator.R")
 
     end.rcode-->
 
-<div id="map" style="width: 600px; height: 400px;"></div>
-<script>
+<embed type="text/html" src = "EarningsMap.html" width = "800" height = "600">
 
-  var map = L.map('map').setView([51.505, -0.09], 13);
-  
-  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	}).addTo(map);
-
-</script>
+<embed type="text/html" src = "LifesatMap.html" width = "800" height = "600">
 
 </body>
 

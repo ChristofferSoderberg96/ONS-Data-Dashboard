@@ -85,7 +85,7 @@ LAlatlon <- spTransform(LAmap, CRS("+proj=longlat +datum=WGS84"))
 # Interactive labels
 datalabel <- paste (
   "Local Authority: ", LAlatlon$LAD21NM, "<br/>",
-  "Median Annual Income (£):", format(LAlatlon$MedianPay, big.mark = ",", scientific = FALSE), "<br/>",
+  "Median Annual Income (\u00A3):", format(LAlatlon$MedianPay, big.mark = ",", scientific = FALSE), "<br/>",
   "Mean Life Satisfaction (0-10): ", LAlatlon$LifeSat
 ) %>%
   lapply(htmltools::HTML)
@@ -93,7 +93,7 @@ datalabel <- paste (
 # Palettes
 earnings_pal <- colorBin("Greens",
                          LAlatlon$MedianPay,
-                         bins = 6,
+                         bins = 8,
                          na.color = "#555555")
 
 lifesat_pal <- colorBin("Purples",
@@ -119,7 +119,7 @@ LAmapEarnings <- leaflet(LAlatlon) %>%
               ) %>%
   addLegend(pal = earnings_pal,
             values = ~LAlatlon$MedianPay,
-            title = "Median Annual Income (£)",
+            title = "Median Annual Income (\u00A3)",
             position = "bottomleft",
             na.label = "No data",
             opacity = 0.8)
@@ -148,8 +148,10 @@ LAmapLifesat <- leaflet(LAlatlon) %>%
             na.label = "No data",
             opacity = 0.8)
 
-# Previews ----
+# Save as html ----
 
-LAmapEarnings
+saveWidget(LAmapEarnings, "EarningsMap.html",
+           selfcontained = FALSE)
 
-LAmapLifesat
+saveWidget(LAmapLifesat, "LifesatMap.html",
+           selfcontained = FALSE)
